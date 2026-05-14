@@ -1,0 +1,51 @@
+﻿@model IEnumerable<RateMedia.Models.Movie>
+
+@{
+    ViewData["Title"] = "Filmi – RateMedia";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">🎬 Seznam filmov</h1>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var film in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="@film.Url" class="card-img-top" height="370px" alt="@film.Title" />
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">@film.Title</h5>
+                        <p class="card-text text-muted small">
+                            @film.Director &nbsp;|&nbsp; @film.Year
+                        </p>
+
+                        <p class="card-text flex-grow-1">
+                            @(film.Description?.Length > 100 ? film.Description.Substring(0, 100) + "..." : film.Description)
+                        </p>
+
+                        <div class="d-flex gap-2 mt-auto pt-2">
+                            <span class="badge bg-warning text-dark">
+                                IMDb: @film.ImdbRating.ToString("F1")
+                            </span>
+                            @if (film.RatingCount > 0)
+                            {
+                                <span class="badge bg-primary">
+                                    Povprečje: @film.AverageRating.ToString("F1")
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-top-0">
+                        <a asp-controller="KMovies" asp-action="Details"
+                           asp-route-id="@film.Id"
+                           class="btn btn-outline-primary w-100">
+                            Poglej & Oceni
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

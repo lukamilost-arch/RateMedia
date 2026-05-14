@@ -1,0 +1,102 @@
+﻿@model RateMedia.Models.Movie
+
+@{
+    ViewData["Title"] = Model.Title + " – Oceni film";
+}
+
+<div class="container mt-4">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>✓</strong> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>✗</strong> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold">@Model.Title</h1>
+            <p class="text-muted fs-5">
+                @Model.Director &nbsp;|&nbsp; @Model.Year
+            </p>
+            <p>@Model.Description</p>
+
+            <table class="table table-bordered w-auto mt-3">
+                <tr>
+                    <th>IMDb ocena</th>
+                    <td><span class="badge bg-warning text-dark fs-6">⭐ @Model.ImdbRating.ToString("F1")</span></td>
+                </tr>
+                <tr>
+                    <th>Povprečna ocena uporabnikov</th>
+                    <td>
+                        @if (Model.RatingCount > 0)
+                        {
+                            <span class="badge bg-primary fs-6">
+                                @Model.AverageRating.ToString("F1") / 10
+                                (@Model.RatingCount ocen)
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Še ni ocen.</span>
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <hr />
+    <div class="row mt-3">
+        <div class="col-md-5">
+            <h3>Oceni ta film</h3>
+
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <form asp-controller="KMovies" asp-action="rate" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="movieId" value="@Model.Id" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            Vaša ocena (1–10):
+                        </label>
+                        <input type="number" name="value" min="1" max="10"
+                               class="form-control form-control-lg w-auto"
+                               placeholder="npr. 8" required />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        ⭐ Oddaj oceno
+                    </button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <strong>Za ocenjevanje filmov se morate prijaviti.</strong><br />
+                    <a asp-controller="Account" asp-action="Login"
+                       asp-route-returnUrl="@Context.Request.Path"
+                       class="btn btn-outline-primary mt-2">
+                        Prijava
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-controller="KMovies" asp-action="Index" class="btn btn-secondary">
+            ← Nazaj na seznam filmov
+        </a>
+    </div>
+
+</div>
