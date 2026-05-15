@@ -56,6 +56,8 @@ using (var scope = app.Services.CreateScope())
 
     db.Database.Migrate();
 
+
+    /* create a test user if it doesn't exist */
     const string testEmail = "test@ratemedia.si";
     const string testPassword = "Test123!";
 
